@@ -13,8 +13,16 @@
   --button-color-primary: #ff7675;
   --button-color-secondary: #a29bfe;
 }
+:root.light {
+  --primary-color: #e6e6e6;
+  --secondary-color: #fff;
+  --text-color: #1d1d1d;
+  --text-secondary-color: rgba(39, 39, 39, 0.5);
+  --button-color-primary: #ff7675;
+  --button-color-secondary: #a29bfe;
+}
 .container {
-  background-color: var(--text-color);
+  background-color: white;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -25,7 +33,7 @@
   height: 500px;
   background-color: var(--primary-color);
   border-radius: 12px;
-  box-shadow: 5px 5px 15px -2px var(--primary-color);
+  box-shadow: 4px 4px 15px -5px #1d1d1d;
   display: flex;
   flex-direction: column;
   justify-content: stretch;
@@ -65,13 +73,16 @@
 .color-mode i {
   margin: 0px 6px;
 }
-.active-color {
+.color-mode i:hover {
+  color: var(--text-color);
+}
+.color-mode > .fa-beat {
   color: var(--text-color);
 }
 .wrapper {
   background-color: var(--secondary-color);
   flex: 65%;
-  border-radius: 20px 20px 0px 0px;
+  border-radius: 10px 10px 0px 0px;
   display: flex;
   flex-flow: row wrap;
   gap: 20px;
@@ -83,15 +94,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: -2px -2px 10px -3px black;
-  color: white;
+  box-shadow: -2px -2px 10px -3px #131212;
+  color: var(--text-color);
   font-size: 1.3rem;
   transition: 0.4s ease box-shadow;
   transition: 0.4s ease font-size;
 }
 .button:hover {
-  box-shadow: 2px 2px 10px -3px black;
+  box-shadow: 2px 2px 10px -3px #131212;
   font-size: 1.4rem;
+}
+.button i {
+  pointer-events: none;
 }
 /* Styling Special Buttons */
 .red {
