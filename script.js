@@ -7,9 +7,9 @@ const rootElement = document.querySelector(":root");
 let firstOperand = "";
 let secondOperand = "";
 let operator = "";
-let mainScreenContent = "";
-let miniScreenContent = "";
-// Functions
+
+// Calculation Functions
+
 const add = (num1, num2) => {
   return num1 + num2;
 };
@@ -33,100 +33,152 @@ const operate = function (op1, op2, operator) {
     return divide(+op1, +op2);
   }
 };
-const clearScreenContent = function () {
-  mainScreenContent = "";
-  miniScreenContent = "";
-  mainScreen.innerHTML = "";
-  miniScreen.innerHTML = "";
+
+// Handling Remove
+
+const removeLastLetter = function (str) {
+  if (str != "" && str != undefined) {
+    return str.substring(0, str.length - 1);
+  } else {
+    return "";
+  }
 };
+
+const handleRemove = function () {
+  if (secondOperand) {
+    secondOperand = removeLastLetter(secondOperand);
+  } else if (firstOperand) {
+    firstOperand = removeLastLetter(firstOperand);
+  }
+  setScreenContent(removeLastLetter(getScreenContent(mainScreen)), mainScreen);
+};
+
+// Handling Operations
+
+const checkOperationValues = () =>
+  firstOperand != "" && secondOperand != "" && operator != "";
+
+const handleOperations = function (inputValue) {
+  if (checkOperationValues()) {
+    let result = operate(firstOperand, secondOperand, operator);
+    clearOperationValues();
+    firstOperand = result;
+    operator = inputValue;
+    result += inputValue;
+    setScreenContent(result, miniScreen);
+    clearMainScreenContent();
+  } else if (secondOperand == "" && operator) {
+  } else {
+    operator = inputValue;
+    setScreenContent(getScreenContent(mainScreen) + inputValue, miniScreen);
+    clearMainScreenContent();
+  }
+};
+
+// Handling Result
+
+const handleResult = function () {
+  if (checkOperationValues()) {
+    setScreenContent(
+      getScreenContent(miniScreen) + getScreenContent(mainScreen),
+      miniScreen
+    );
+    setScreenContent(
+      operate(firstOperand, secondOperand, operator),
+      mainScreen
+    );
+  }
+};
+
+// Handling Points
+
+const checkOperandEndsWithDot = (operand) => {
+  return operand.includes(".");
+};
+
+const handlePoint = function (inputValue) {
+  if (!checkOperandEndsWithDot(getScreenContent(mainScreen))) {
+    if (firstOperand && operator) {
+      secondOperand += inputValue;
+    } else {
+      firstOperand += inputValue;
+    }
+    setScreenContent(getScreenContent(mainScreen) + inputValue, mainScreen);
+  }
+};
+
+// Handling Numbers
+
+const handleNumbers = function (inputValue) {
+  if (firstOperand && operator) {
+    secondOperand += inputValue;
+  } else {
+    firstOperand += inputValue;
+  }
+  setScreenContent(getScreenContent(mainScreen) + inputValue, mainScreen);
+};
+// General Functions
+
+const handleClearAll = function () {
+  clearScreenContent();
+  clearOperationValues();
+};
+
 const clearMainScreenContent = function () {
-  mainScreenContent = "";
   mainScreen.innerHTML = "";
 };
 const clearMiniScreenContent = function () {
-  miniScreenContent = "";
   miniScreen.innerHTML - "";
+};
+const getScreenContent = function (screen) {
+  return screen.innerText;
 };
 const setScreenContent = function (content, screen) {
   screen.innerHTML = content;
+};
+const clearScreenContent = function () {
+  mainScreen.innerHTML = "";
+  miniScreen.innerHTML = "";
 };
 const clearOperationValues = function () {
   firstOperand = "";
   secondOperand = "";
   operator = "";
 };
-const checkOperationValues = () => firstOperand && secondOperand && operator;
-const removeLastLetter = function (str) {
-  return str.slice(0, str.length - 1);
-};
-const handleInput = function (inputValue) {
-  const operatorsList = "+-*/";
-  if (inputValue === "ac") {
-    clearScreenContent();
-    clearOperationValues();
-  } else if (inputValue == "c") {
-    mainScreenContent = removeLastLetter(mainScreenContent);
-    if (secondOperand) {
-      secondOperand = removeLastLetter(secondOperand);
-    } else if (firstOperand) {
-      firstOperand = removeLastLetter(firstOperand);
-    }
-    miniScreenContent = mainScreenContent;
-    setScreenContent(mainScreenContent, mainScreen);
-  } else if (operatorsList.includes(inputValue)) {
-    if (checkOperationValues()) {
-      miniScreenContent = operate(firstOperand, secondOperand, operator);
-      clearOperationValues();
-      firstOperand = miniScreenContent;
-      operator = inputValue;
-      miniScreenContent += inputValue;
-      setScreenContent(miniScreenContent, miniScreen);
-      clearMainScreenContent();
-    } else if (!secondOperand && operator) {
-    } else {
-      operator = inputValue;
-      miniScreenContent += inputValue;
-      setScreenContent(miniScreenContent, miniScreen);
-      clearMainScreenContent();
-    }
-  } else if (inputValue === "=") {
-    if (checkOperationValues()) {
-      setScreenContent(miniScreenContent, miniScreen);
-      mainScreenContent = operate(firstOperand, secondOperand, operator);
-      //   firstOperand = mainScreenContent;
-      setScreenContent(mainScreenContent, mainScreen);
-    }
-  } else if (inputValue === ".") {
-    if (firstOperand) {
-      if (firstOperand && operator) {
-        secondOperand += inputValue;
-      } else {
-        firstOperand += inputValue;
-      }
-      mainScreenContent += inputValue;
-      miniScreenContent += inputValue;
-      setScreenContent(mainScreenContent, mainScreen);
-    }
-  } else {
-    if (firstOperand && operator) {
-      secondOperand += inputValue;
-    } else {
-      firstOperand += inputValue;
-    }
-    mainScreenContent += inputValue;
-    miniScreenContent += inputValue;
-    setScreenContent(mainScreenContent, mainScreen);
-  }
-};
+// Event Listeners
 
 // Add Event Listener For Each Btn
 buttons.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    handleInput(e.target.id);
-  });
+  btn.addEventListener("click", (e) => handleEvent(e.target.id));
 });
 
+// Main Function
+const handleEvent = function (inputValue) {
+  switch (inputValue) {
+    case "ac":
+      handleClearAll(inputValue);
+      break;
+    case "c":
+      handleRemove(inputValue);
+      break;
+    case "+":
+    case "-":
+    case "*":
+    case "/":
+      handleOperations(inputValue);
+      break;
+    case "=":
+      handleResult(inputValue);
+      break;
+    case ".":
+      handlePoint(inputValue);
+      break;
+    default:
+      handleNumbers(inputValue);
+  }
+};
 // Setting Color Mode
+
 const setCurrentColorTheme = function (theme) {
   if (theme == "light") {
     rootElement.classList.add("light");
@@ -139,6 +191,6 @@ colorButtons.forEach((btn) => {
     setCurrentColorTheme(e.target.id);
     const activeThemeElement = document.querySelector(".color-mode .fa-beat");
     activeThemeElement.classList.remove("fa-beat");
-    e.target.classList.add("fa-beat")
+    e.target.classList.add("fa-beat");
   });
 });
