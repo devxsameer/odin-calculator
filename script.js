@@ -20,7 +20,11 @@ const multiply = (num1, num2) => {
   return num1 * num2;
 };
 const divide = (num1, num2) => {
-  return num1 / num2;
+  if (num2 == 0) {
+    return 0;
+  } else {
+    return num1 / num2;
+  }
 };
 const operate = function (op1, op2, operator) {
   if (operator == "+") {
@@ -29,7 +33,7 @@ const operate = function (op1, op2, operator) {
     return subtract(+op1, +op2);
   } else if (operator == "*") {
     return multiply(+op1, +op2);
-  } else {
+  } else if (operator == "/") {
     return divide(+op1, +op2);
   }
 };
@@ -37,7 +41,7 @@ const operate = function (op1, op2, operator) {
 // Handling Remove
 
 const removeLastLetter = function (str) {
-  if (str != "" && str != undefined) {
+  if (str != "" && str != undefined && str) {
     return str.substring(0, str.length - 1);
   } else {
     return "";
@@ -56,7 +60,7 @@ const handleRemove = function () {
 // Handling Operations
 
 const checkOperationValues = () =>
-  firstOperand != "" && secondOperand != "" && operator != "";
+  firstOperand !== "" && secondOperand !== "" && operator !== "";
 
 const handleOperations = function (inputValue) {
   if (checkOperationValues()) {
@@ -110,7 +114,7 @@ const handlePoint = function (inputValue) {
 // Handling Numbers
 
 const handleNumbers = function (inputValue) {
-  if (firstOperand && operator) {
+  if (firstOperand !== "" && operator) {
     secondOperand += inputValue;
   } else {
     firstOperand += inputValue;
@@ -177,6 +181,19 @@ const handleEvent = function (inputValue) {
       handleNumbers(inputValue);
   }
 };
+
+// Adding Keyboard Support
+
+window.addEventListener("keydown", handleKeyboardInput);
+function handleKeyboardInput(e) {
+  if (e.key >= 0 && e.key <= 9) handleNumbers(e.key);
+  if (e.key === ".") handlePoint(e.key);
+  if (e.key === "=" || e.key === "Enter") handleResult(e.key);
+  if (e.key === "Backspace") handleRemove(e.key);
+  if (e.key === "Escape" || e.key === "Delete") handleClearAll(e.key);
+  if (e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/")
+    handleOperations(e.key);
+}
 // Setting Color Mode
 
 const setCurrentColorTheme = function (theme) {
